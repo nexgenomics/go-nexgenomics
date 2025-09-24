@@ -12,6 +12,6 @@ Ping
 ****/
 
 func Ping() error {
-	log.Printf ("nexgenomics PING")
+	log.Printf ("nexgenomics PING revised")
 	return nil
 }
