@@ -7,12 +7,13 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-// Webhook is the object which accesses the webhook features of the NexGenomics cloud.
+// Webhook accesses agents in the NexGenomics cloud using a webhook interface.
+// The object requires an authorization token belonging to the agent you want to access.
 type Webhook struct {
 	Token string
 }
 
-// Ping is a trivial package test
+// Ping is a trivial package test.
 func Ping(s string) string {
 	return fmt.Sprintf("nexgenomics ping [%s]", s)
 }
