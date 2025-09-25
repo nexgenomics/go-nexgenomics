@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	TEST_WEBHOOK_TOKEN string
+	WEBHOOK_TOKEN string
 )
 
 func init() {
-	TEST_WEBHOOK_TOKEN = os.Getenv("TEST_WEBHOOK_TOKEN")
+	WEBHOOK_TOKEN = os.Getenv("WEBHOOK_TOKEN")
 }
 
 func TestPing(t *testing.T) {
@@ -20,8 +20,9 @@ func TestPing(t *testing.T) {
 }
 
 func TestNewWebhook(t *testing.T) {
-	h := nexgenomics.NewWebhook(TEST_WEBHOOK_TOKEN)
-	t.Logf("%s", h)
+	t.Logf("webhook token [%s]", WEBHOOK_TOKEN)
+	h := nexgenomics.NewWebhook(WEBHOOK_TOKEN)
+	//t.Logf("%s", h)
 
 	sentences := []string{
 		"This is thing 1",
