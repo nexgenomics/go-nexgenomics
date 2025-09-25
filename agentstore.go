@@ -2,6 +2,7 @@ package nexgenomics
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -12,8 +13,9 @@ type Agentstore struct {
 }
 
 type Agent struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // NewAgentstore
@@ -30,9 +32,7 @@ func (as *Agentstore) Agents() ([]Agent, error) {
 
 	c := resty.New()
 	resp, e := c.R().
-		//SetHeader("Content-Type", "application/octet-stream").
 		SetHeader("Authorization", fmt.Sprintf("Bearer %s", as.Token)).
-		//SetBody(blob_bytes).
 		SetResult(&[]Agent{}).
 		Get("https://agentstore.nexgenomics.ai/api/agents")
 
