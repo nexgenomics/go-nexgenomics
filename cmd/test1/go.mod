@@ -1,4 +1,4 @@
-module test1
+module github.com/nexgenomics/go-nexgenomics/cmd/test1
 
 go 1.24.6
 
