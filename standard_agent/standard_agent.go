@@ -1,4 +1,4 @@
-package standard-agent
+package standard_agent
 
 import (
 	"log"
