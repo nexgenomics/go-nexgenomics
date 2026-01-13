@@ -24,7 +24,7 @@ type CallCfg struct {
 // Call
 func Call(cfg *CallCfg) (*Response, error) {
 
-	natsurl := get_natsurl()
+	natsurl := get_natsurl(&ServeCfg{})
 	if natsurl == "" {
 		return nil,fmt.Errorf("missing identifiers")
 	}
