@@ -1,10 +1,10 @@
-package standard_agent
+package fabric
 
 import (
 	"log"
 )
 
-func XXX() {
-	log.Printf ("Standard Agent XXX")
-}
 
+
+
+func NewFabricServer (cfg 
