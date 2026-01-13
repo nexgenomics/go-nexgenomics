@@ -29,7 +29,7 @@ func get_agentid() string {
 
 // get_natsurl
 func get_natsurl() string {
-	a := getCmdlineValue("natsurl")
+	a := getCmdlineValue("nats")
 	if a == "" {
 		a = os.Getenv("NATSURL")
 	}
