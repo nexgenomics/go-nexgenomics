@@ -3,7 +3,7 @@ package fabric
 import (
 	"context"
 	"fmt"
-	"log"
+	_"log"
 	"encoding/json"
 	"strings"
 	"github.com/nats-io/nats.go"
@@ -50,7 +50,8 @@ func Call(cfg *CallCfg) (*Response, error) {
 	}
 
 	subj := fmt.Sprintf("agent.rest.%s.%s.%s.%s", cfg.Tenant, cfg.Agent, m, ep)
-	log.Printf("Calling %v",subj)
+	//log.Printf("Calling %v",subj)
+	//log.Printf("Calling %v",j)
 	msg,e := nc.RequestWithContext(cfg.Ctx, subj, j)
 	if e == nil {
 		var r Response
