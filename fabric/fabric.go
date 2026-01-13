@@ -45,8 +45,8 @@ type Reply struct {
 	Body    any
 }
 
-// response is used internally in this library.
-type response struct {
+// Response is used internally in this library.
+type Response struct {
 	Status  int      `json:"status"`
 	Headers []string `json:"headers"`
 	Errors  []string `json:"errors"`
@@ -54,7 +54,7 @@ type response struct {
 }
 
 // respond
-func (r *response) respond(msg *nats.Msg) {
+func (r *Response) respond(msg *nats.Msg) {
 	j, _ := json.Marshal(r)
 	if msg.Reply != "" {
 		msg.Respond(j)
@@ -75,17 +75,33 @@ type Route struct {
 	subject_suffix string
 }
 
+// ServeCfg provides parameters that are optional (Verbose) or redundant with
+// identify parameters. This is useful when the caller is running in a docker
+// container rather than as a standard agent, and the identity parameters aren't
+// obtainable in the usual way.
+type ServeCfg struct {
+	Tenant  string
+	AgentId string
+	NatsUrl string
+	Verbose bool
+}
+
 // Serve
-func Serve(ctx context.Context, routes []Route, verbose bool) (err error) {
+func Serve(ctx context.Context, routes []Route, cfg *ServeCfg) (err error) {
 	if len(routes) == 0 {
 		err = fmt.Errorf("no routes specified")
 		return
 	}
 
-	// look up identifiers
-	tenant := get_tenant()
-	agentid := get_agentid()
-	natsurl := get_natsurl()
+	// the config struct is optional.
+	if cfg == nil {
+		cfg = &ServeCfg{}
+	}
+
+	// look up identifiers. If present in the config, they take precedence.
+	tenant := get_tenant(cfg)
+	agentid := get_agentid(cfg)
+	natsurl := get_natsurl(cfg)
 
 	if tenant == "" || agentid == "" || natsurl == "" {
 		err = fmt.Errorf("missing identifiers")
@@ -177,7 +193,7 @@ func (route *Route) handle_msg(msg *nats.Msg) {
 	//log.Printf("%v",string(msg.Data))
 
 	send_error := func(e error, status int) {
-		re := response{
+		re := Response{
 			Status: status,
 			Errors: []string{fmt.Sprintf("%v", e)},
 		}
@@ -215,7 +231,7 @@ func (route *Route) handle_msg(msg *nats.Msg) {
 		reply := NewReply()
 		route.Handler(reply, &req)
 
-		// convert the reply from the user code into a response.
+		// convert the reply from the user code into a Response.
 		resp := reply.to_response()
 		// ALWAYS send a response, even if the Body is nil
 		resp.respond(msg)
@@ -228,9 +244,9 @@ func (route *Route) handle_msg(msg *nats.Msg) {
 // object that we will use to reply to a NATS message.
 // VERY IMPORTANT: if the user's Reply object has a nil Body with a 200 status,
 // NO RESPONSE will be sent!
-func (r *Reply) to_response() *response {
+func (r *Reply) to_response() *Response {
 
-	re := response{
+	re := Response{
 		Status: r.Status,
 	}
 
@@ -276,4 +292,9 @@ func (r *Request) parseHeaders() {
 			r.Headers[y1] = append(r.Headers[y1], y2)
 		}
 	}
+}
+
+// AddHeader ASSUMES that the Headers field has been initialized.
+func (r *Reply) AddHeader(h string) {
+	r.Headers = append(r.Headers, h)
 }

@@ -10,8 +10,11 @@ import (
 )
 
 // get_tenant
-func get_tenant() string {
-	a := getCmdlineValue("tenant")
+func get_tenant(cfg *ServeCfg) string {
+	a := cfg.Tenant
+	if a == "" {
+		a = getCmdlineValue("tenant")
+	}
 	if a == "" {
 		a = os.Getenv("TENANT_ID")
 	}
@@ -19,8 +22,11 @@ func get_tenant() string {
 }
 
 // get_agentid
-func get_agentid() string {
-	a := getCmdlineValue("agent")
+func get_agentid(cfg *ServeCfg) string {
+	a := cfg.AgentId
+	if a == "" {
+		a = getCmdlineValue("agent")
+	}
 	if a == "" {
 		a = os.Getenv("AGENT_ID")
 	}
@@ -28,8 +34,11 @@ func get_agentid() string {
 }
 
 // get_natsurl
-func get_natsurl() string {
-	a := getCmdlineValue("nats")
+func get_natsurl(cfg *ServeCfg) string {
+	a := cfg.NatsUrl
+	if a == "" {
+		a = getCmdlineValue("nats")
+	}
 	if a == "" {
 		a = os.Getenv("NATSURL")
 	}
