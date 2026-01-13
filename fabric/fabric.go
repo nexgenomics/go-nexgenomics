@@ -186,12 +186,6 @@ func (route *Route) subscribe(nc *nats.Conn, tenant string, agent string) error 
 
 // handle_msg
 func (route *Route) handle_msg(msg *nats.Msg) {
-	//log.Printf ("!!!!!! %v",msg)
-	//log.Printf ("%v",route.subject_prefix)
-	//log.Printf ("%v",route.subject_suffix)
-	//log.Printf("%v",subj)
-	//log.Printf("%v",string(msg.Data))
-
 	send_error := func(e error, status int) {
 		re := Response{
 			Status: status,
