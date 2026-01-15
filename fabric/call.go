@@ -12,6 +12,7 @@ import (
 // CallCfg
 type CallCfg struct {
 	Ctx      context.Context
+	NatsUrl  string // optional
 	Tenant   string
 	Agent    string
 	Method   string
@@ -23,9 +24,18 @@ type CallCfg struct {
 // Call
 func Call(cfg *CallCfg) (*Response, error) {
 
-	natsurl := get_natsurl(&ServeCfg{})
+	// If the caller set a NATS endpoint in the call config, use that.
+	// Otherwise check the local system. This model gives the
+	// maximum flexibility.
+	// This module is primarily intended for use in standard agents running
+	// in the Secure Fabric, so connection parameters are already available
+	// and visible to get_natsurl.
+	natsurl := cfg.NatsUrl
 	if natsurl == "" {
-		return nil, fmt.Errorf("missing identifiers")
+		natsurl = get_natsurl(&ServeCfg{})
+		if natsurl == "" {
+			return nil, fmt.Errorf("missing identifiers")
+		}
 	}
 
 	hdrs := cfg.Headers
