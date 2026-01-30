@@ -3,7 +3,6 @@ package fabric
 import (
 	"context"
 	"encoding/json"
-	"log"
 )
 
 // Embed returns an embedding for the given input string as a vector of float32.
