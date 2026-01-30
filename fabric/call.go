@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nats-io/nats.go"
-	_ "log"
+	"log"
 	"strings"
 )
 
@@ -78,6 +78,44 @@ func Call(cfg *CallCfg) (*Response, error) {
 		} else {
 			return &r, fmt.Errorf("Error %d", r.Status)
 		}
+	} else {
+		return nil, fmt.Errorf("No response")
+	}
+
+}
+
+// RawCall implements a blank nats call with no structure or interpretation
+// of the input and output. This is useful for certain system facilities (such
+// as the embedding engines) that use raw I/O.
+func RawCall(cfg *CallCfg) (*Response, error) {
+
+	// If the caller set a NATS endpoint in the call config, use that.
+	// Otherwise check the local system. This model gives the
+	// maximum flexibility.
+	// This module is primarily intended for use in standard agents running
+	// in the Secure Fabric, so connection parameters are already available
+	// and visible to get_natsurl.
+	natsurl := cfg.NatsUrl
+	if natsurl == "" {
+		natsurl = get_natsurl(&ServeCfg{})
+		if natsurl == "" {
+			return nil, fmt.Errorf("missing identifiers")
+		}
+	}
+
+	nc, e := nats.Connect(natsurl)
+	if e != nil {
+		return nil, e
+	}
+	defer nc.Drain()
+
+	subj := fmt.Sprintf("agent.rest.%s.%s", cfg.Tenant, cfg.Agent)
+	log.Printf("--------- %v", subj)
+	msg, e := nc.RequestWithContext(cfg.Ctx, subj, cfg.Body.([]byte))
+	if e == nil {
+		var r Response
+		r.Body = msg.Data
+		return &r, nil
 	} else {
 		return nil, fmt.Errorf("No response")
 	}
