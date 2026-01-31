@@ -13,8 +13,7 @@ type ID string
 type Point struct {
 	Id ID
 	Embedding []float32
-	Payload string
-	Metadata map[string]string
+	Payload map[string]string
 	// scores, etc
 }
 
