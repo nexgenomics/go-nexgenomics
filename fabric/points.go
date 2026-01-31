@@ -3,7 +3,6 @@ package fabric
 import (
 	"context"
 	"fmt"
-	"log"
 )
 
 
@@ -40,7 +39,7 @@ func UpsertPoint(ctx context.Context, model string, pt *Point) (ID,error) {
 
 	if t, ok := resp.Body.(map[string]any); ok {
 		if id,ok := t["id"].(string); ok {
-			return id, nil
+			return ID(id), nil
 		}
 	}
 	return "", fmt.Errorf("No reply from model")
