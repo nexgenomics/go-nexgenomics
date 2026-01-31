@@ -17,11 +17,18 @@ type Point struct {
 }
 
 
-// UpsertPoint
+// UpsertPoint.
 func UpsertPoint(ctx context.Context, model string, pt *Point) (ID,error) {
 
 	if model == "" {
 		model = "vernon-002"
+	}
+
+	scfg := ServeCfg{}
+	hdrs := []string {
+		fmt.Sprintf("tenant:%s", get_tenant(&scfg)),
+		fmt.Sprintf("agent:%s", get_agentid(&scfg)),
+		fmt.Sprintf("app:%s", "X"),
 	}
 
 	resp,e := Call(&CallCfg{
@@ -30,6 +37,7 @@ func UpsertPoint(ctx context.Context, model string, pt *Point) (ID,error) {
 		Agent:    model,
 		Method: "put",
 		Endpoint: "point",
+		Headers: hdrs,
 		Body: pt,
 	})
 
