@@ -38,13 +38,11 @@ func UpsertPoint(ctx context.Context, model string, pt *Point) (ID,error) {
 		return "", e
 	}
 
-	t, ok := resp.Body.(map[string]any)
-	if !ok {
-		return "", fmt.Errorf("No reply from model")
+	if t, ok := resp.Body.(map[string]any); ok {
+		if id,ok := t["id"].(string); ok {
+			return id, nil
+		}
 	}
-
-	log.Printf("VERNON %v", t)
-
-	return "NOTHING",nil
+	return "", fmt.Errorf("No reply from model")
 }
 
