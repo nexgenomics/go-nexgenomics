@@ -3,7 +3,8 @@ package fabric
 import (
 	"context"
 	"fmt"
-	"log"
+	"github.com/mitchellh/mapstructure"
+	_ "log"
 )
 
 type ID string
@@ -83,8 +84,25 @@ func SearchPoints(ctx context.Context, model string, search *SearchCfg) ([]Point
 		Body:     search,
 	})
 
-	log.Printf("SEARCH %v", resp)
-	log.Printf("SEARCH %v", e)
+	out := []Point{}
 
-	return []Point{}, e
+	if e != nil {
+		return out, e
+	}
+
+	pts, ok := resp.Body.([]any)
+	if !ok {
+		return out, fmt.Errorf("unrecognized return format")
+	}
+
+	for _, p := range pts {
+		var pp Point
+		if e := mapstructure.Decode(p, &pp); e == nil {
+			//log.Printf("%v",pp.Id)
+			//log.Printf("********")
+			out = append(out, pp)
+		}
+	}
+
+	return out, nil
 }
